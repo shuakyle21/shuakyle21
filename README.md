@@ -1,5 +1,5 @@
 ```markdown
-### Hi there 👋
+Hi there 👋
 
 I'm Joshua Klyne Pudadera, also known as shuakyle21, a fresh computer science graduate passionate about crafting projects with real-world impact and business solutions. Currently, I'm honing my skills as a developer in progress, eager to learn and contribute to innovative projects.
 
