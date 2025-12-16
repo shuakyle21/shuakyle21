@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Order Sync Demo - Bug Fixes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .online {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .offline {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.danger {
+            background-color: #dc3545;
+        }
+        button.danger:hover {
+            background-color: #c82333;
+        }
+        button.secondary {
+            background-color: #6c757d;
+        }
+        button.secondary:hover {
+            background-color: #545b62;
+        }
+        .orders-list {
+            margin-top: 20px;
+        }
+        .order-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-item.syncing {
+            border-left-color: #ffc107;
+            opacity: 0.7;
+        }
+        .order-item.synced {
+            border-left-color: #28a745;
+        }
+        .order-info {
+            flex: 1;
+        }
+        .order-status {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .sync-queue {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .log {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .log-entry {
+            padding: 2px 0;
+        }
+        .log-entry.error {
+            color: #dc3545;
+        }
+        .log-entry.success {
+            color: #28a745;
+        }
+        .log-entry.info {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛒 Offline Order Sync Demo - Bug Fixes</h1>
+    
+    <div class="container">
+        <div id="networkStatus" class="status online">
+            🟢 Online
+        </div>
+        
+        <button onclick="toggleNetwork()" class="secondary">Toggle Network</button>
+        <button onclick="clearAllData()" class="danger">Clear All Data</button>
+    </div>
+
+    <div class="container">
+        <h2>Create New Order</h2>
+        <form id="orderForm">
+            <div class="form-group">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" required>
+            </div>
+            <div class="form-group">
+                <label for="product">Product:</label>
+                <input type="text" id="product" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" step="0.01" required>
+            </div>
+            <button type="submit">Create Order</button>
+        </form>
+    </div>
+
+    <div class="container" id="syncQueueContainer" style="display: none;">
+        <div class="sync-queue">
+            <h3>📋 Pending Sync Queue</h3>
+            <div id="syncQueueList"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Orders</h2>
+        <div class="orders-list" id="ordersList">
+            <p>No orders yet.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Activity Log</h2>
+        <div class="log" id="activityLog"></div>
+    </div>
+
+    <script>
+        // Global state
+        let isOnline = navigator.onLine;
+        let db;
+        let syncInProgress = false;
+
+        // Initialize IndexedDB
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('OrderSyncDB', 1);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Store for orders
+                    if (!db.objectStoreNames.contains('orders')) {
+                        const ordersStore = db.createObjectStore('orders', { keyPath: 'id' });
+                        ordersStore.createIndex('syncStatus', 'syncStatus', { unique: false });
+                        ordersStore.createIndex('clientId', 'clientId', { unique: true });
+                    }
+                    
+                    // Store for sync queue with idempotency tracking
+                    if (!db.objectStoreNames.contains('syncQueue')) {
+                        const syncStore = db.createObjectStore('syncQueue', { keyPath: 'id', autoIncrement: true });
+                        syncStore.createIndex('orderId', 'orderId', { unique: false });
+                        syncStore.createIndex('clientId', 'clientId', { unique: false });
+                        syncStore.createIndex('status', 'status', { unique: false });
+                    }
+                };
+            });
+        }
+
+        // Generate unique client-side ID for idempotency
+        function generateClientId() {
+            return `client-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        // Log activity
+        function logActivity(message, type = 'info') {
+            const logDiv = document.getElementById('activityLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.insertBefore(entry, logDiv.firstChild);
+        }
+
+        // Update network status UI
+        function updateNetworkStatus() {
+            const statusDiv = document.getElementById('networkStatus');
+            if (isOnline) {
+                statusDiv.className = 'status online';
+                statusDiv.textContent = '🟢 Online';
+                logActivity('Network connection restored', 'success');
+                // Process sync queue when coming back online
+                processSyncQueue();
+            } else {
+                statusDiv.className = 'status offline';
+                statusDiv.textContent = '🔴 Offline';
+                logActivity('Network connection lost', 'error');
+            }
+        }
+
+        // Toggle network simulation
+        function toggleNetwork() {
+            isOnline = !isOnline;
+            updateNetworkStatus();
+        }
+
+        // Simulate API call to create order
+        async function apiCreateOrder(order) {
+            if (!isOnline) {
+                throw new Error('Network unavailable');
+            }
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Simulate server response with server-generated ID
+            return {
+                ...order,
+                id: `server-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                serverSynced: true,
+                syncedAt: new Date().toISOString()
+            };
+        }
+
+        // Simulate API call to delete order
+        async function apiDeleteOrder(orderId) {
+            if (!isOnline) {
+                throw new Error('Network unavailable');
+            }
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            logActivity(`Server confirmed deletion of order ${orderId}`, 'success');
+            return { success: true };
+        }
+
+        // FIX #1: Add order to sync queue with idempotency check
+        async function addToSyncQueue(order, action = 'create') {
+            const tx = db.transaction(['syncQueue'], 'readwrite');
+            const store = tx.objectStore('syncQueue');
+            
+            // Check if this clientId is already in the queue
+            const clientIdIndex = store.index('clientId');
+            const existing = await new Promise((resolve) => {
+                const request = clientIdIndex.get(order.clientId);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => resolve(null);
+            });
+            
+            if (existing && existing.status === 'pending') {
+                logActivity(`Order ${order.clientId} already in sync queue, skipping duplicate`, 'info');
+                return existing;
+            }
+            
+            const syncItem = {
+                orderId: order.id,
+                clientId: order.clientId,
+                action: action,
+                data: order,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                attempts: 0
+            };
+            
+            await new Promise((resolve, reject) => {
+                const request = store.add(syncItem);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+            
+            logActivity(`Added ${action} action for order ${order.clientId} to sync queue`, 'info');
+            updateSyncQueueUI();
+            return syncItem;
+        }
+
+        // FIX #1: Process sync queue with duplicate prevention
+        async function processSyncQueue() {
+            if (!isOnline || syncInProgress) {
+                return;
+            }
+            
+            syncInProgress = true;
+            logActivity('Processing sync queue...', 'info');
+            
+            try {
+                const tx = db.transaction(['syncQueue'], 'readwrite');
+                const store = tx.objectStore('syncQueue');
+                const statusIndex = store.index('status');
+                
+                const pendingItems = await new Promise((resolve) => {
+                    const items = [];
+                    const request = statusIndex.openCursor(IDBKeyRange.only('pending'));
+                    request.onsuccess = (event) => {
+                        const cursor = event.target.result;
+                        if (cursor) {
+                            items.push(cursor.value);
+                            cursor.continue();
+                        } else {
+                            resolve(items);
+                        }
+                    };
+                });
+                
+                for (const item of pendingItems) {
+                    try {
+                        // Mark as processing to prevent duplicate submission
+                        await updateSyncQueueItem(item.id, { status: 'processing', attempts: item.attempts + 1 });
+                        
+                        if (item.action === 'create') {
+                            // Check if already synced by clientId
+                            const alreadySynced = await getOrderByClientId(item.clientId);
+                            if (alreadySynced && alreadySynced.serverSynced) {
+                                logActivity(`Order ${item.clientId} already synced, removing from queue`, 'info');
+                                await removeSyncQueueItem(item.id);
+                                continue;
+                            }
+                            
+                            const syncedOrder = await apiCreateOrder(item.data);
+                            await updateOrder(item.data.id, syncedOrder);
+                            logActivity(`Successfully synced order ${item.clientId}`, 'success');
+                        } else if (item.action === 'delete') {
+                            await apiDeleteOrder(item.orderId);
+                            await deleteOrderFromDB(item.orderId);
+                            logActivity(`Successfully deleted order ${item.orderId}`, 'success');
+                        }
+                        
+                        await removeSyncQueueItem(item.id);
+                    } catch (error) {
+                        logActivity(`Failed to sync item ${item.id}: ${error.message}`, 'error');
+                        // Reset to pending for retry
+                        await updateSyncQueueItem(item.id, { status: 'pending' });
+                    }
+                }
+                
+                await renderOrders();
+                updateSyncQueueUI();
+            } finally {
+                syncInProgress = false;
+            }
+        }
+
+        // Update sync queue item
+        async function updateSyncQueueItem(id, updates) {
+            const tx = db.transaction(['syncQueue'], 'readwrite');
+            const store = tx.objectStore('syncQueue');
+            
+            const item = await new Promise((resolve) => {
+                const request = store.get(id);
+                request.onsuccess = () => resolve(request.result);
+            });
+            
+            if (item) {
+                Object.assign(item, updates);
+                await new Promise((resolve, reject) => {
+                    const request = store.put(item);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        }
+
+        // Remove sync queue item
+        async function removeSyncQueueItem(id) {
+            const tx = db.transaction(['syncQueue'], 'readwrite');
+            const store = tx.objectStore('syncQueue');
+            await new Promise((resolve) => {
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+            });
+        }
+
+        // Get order by client ID
+        async function getOrderByClientId(clientId) {
+            const tx = db.transaction(['orders'], 'readonly');
+            const store = tx.objectStore('orders');
+            const index = store.index('clientId');
+            
+            return new Promise((resolve) => {
+                const request = index.get(clientId);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => resolve(null);
+            });
+        }
+
+        // Create order
+        async function createOrder(orderData) {
+            const clientId = generateClientId();
+            const order = {
+                id: clientId, // Use client ID as temporary ID
+                clientId: clientId,
+                ...orderData,
+                createdAt: new Date().toISOString(),
+                syncStatus: isOnline ? 'syncing' : 'pending',
+                serverSynced: false
+            };
+            
+            // Save to IndexedDB
+            const tx = db.transaction(['orders'], 'readwrite');
+            await new Promise((resolve, reject) => {
+                const request = tx.objectStore('orders').add(order);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+            
+            logActivity(`Order ${clientId} created locally`, 'success');
+            
+            if (isOnline) {
+                // Try to sync immediately
+                try {
+                    const syncedOrder = await apiCreateOrder(order);
+                    await updateOrder(order.id, syncedOrder);
+                    logActivity(`Order ${clientId} synced immediately`, 'success');
+                } catch (error) {
+                    logActivity(`Immediate sync failed, adding to queue: ${error.message}`, 'error');
+                    await addToSyncQueue(order, 'create');
+                }
+            } else {
+                // Add to sync queue for later
+                await addToSyncQueue(order, 'create');
+            }
+            
+            await renderOrders();
+        }
+
+        // Update order
+        async function updateOrder(id, updates) {
+            const tx = db.transaction(['orders'], 'readwrite');
+            const store = tx.objectStore('orders');
+            
+            const order = await new Promise((resolve) => {
+                const request = store.get(id);
+                request.onsuccess = () => resolve(request.result);
+            });
+            
+            if (order) {
+                Object.assign(order, updates);
+                await new Promise((resolve) => {
+                    const request = store.put(order);
+                    request.onsuccess = () => resolve();
+                });
+            }
+        }
+
+        // FIX #2: Persistent order deletion
+        async function deleteOrder(orderId) {
+            if (isOnline) {
+                try {
+                    // Try to delete on server immediately
+                    await apiDeleteOrder(orderId);
+                    await deleteOrderFromDB(orderId);
+                    logActivity(`Order ${orderId} deleted and synced`, 'success');
+                } catch (error) {
+                    logActivity(`Server deletion failed, queuing: ${error.message}`, 'error');
+                    // Add to sync queue for later deletion
+                    const order = await getOrder(orderId);
+                    if (order) {
+                        await addToSyncQueue({ id: orderId, clientId: order.clientId }, 'delete');
+                        // Mark as deleted locally
+                        await updateOrder(orderId, { deleted: true, syncStatus: 'deleting' });
+                    }
+                }
+            } else {
+                // Queue for deletion when online
+                const order = await getOrder(orderId);
+                if (order) {
+                    await addToSyncQueue({ id: orderId, clientId: order.clientId }, 'delete');
+                    // Mark as deleted locally
+                    await updateOrder(orderId, { deleted: true, syncStatus: 'deleting' });
+                    logActivity(`Order ${orderId} queued for deletion`, 'info');
+                }
+            }
+            
+            await renderOrders();
+        }
+
+        // Delete order from database
+        async function deleteOrderFromDB(orderId) {
+            const tx = db.transaction(['orders'], 'readwrite');
+            await new Promise((resolve) => {
+                const request = tx.objectStore('orders').delete(orderId);
+                request.onsuccess = () => resolve();
+            });
+        }
+
+        // Get single order
+        async function getOrder(orderId) {
+            const tx = db.transaction(['orders'], 'readonly');
+            return new Promise((resolve) => {
+                const request = tx.objectStore('orders').get(orderId);
+                request.onsuccess = () => resolve(request.result);
+            });
+        }
+
+        // Get all orders
+        async function getAllOrders() {
+            const tx = db.transaction(['orders'], 'readonly');
+            return new Promise((resolve) => {
+                const request = tx.objectStore('orders').getAll();
+                request.onsuccess = () => resolve(request.result);
+            });
+        }
+
+        // Render orders list
+        async function renderOrders() {
+            const orders = await getAllOrders();
+            const ordersList = document.getElementById('ordersList');
+            
+            // Filter out deleted orders (unless they're still syncing)
+            const visibleOrders = orders.filter(order => !order.deleted || order.syncStatus === 'deleting');
+            
+            if (visibleOrders.length === 0) {
+                ordersList.innerHTML = '<p>No orders yet.</p>';
+                return;
+            }
+            
+            ordersList.innerHTML = visibleOrders.map(order => {
+                const statusText = order.deleted ? 'Deleting...' :
+                    order.serverSynced ? 'Synced ✓' :
+                    order.syncStatus === 'syncing' ? 'Syncing...' :
+                    'Pending sync';
+                
+                const statusClass = order.deleted ? 'syncing' :
+                    order.serverSynced ? 'synced' :
+                    order.syncStatus === 'syncing' ? 'syncing' : '';
+                
+                return `
+                    <div class="order-item ${statusClass}">
+                        <div class="order-info">
+                            <strong>${order.customerName}</strong> - ${order.product}
+                            <div>Amount: $${parseFloat(order.amount).toFixed(2)}</div>
+                            <div class="order-status">
+                                ID: ${order.id} | Client ID: ${order.clientId} | Status: ${statusText}
+                            </div>
+                        </div>
+                        <button class="danger" onclick="deleteOrder('${order.id}')" ${order.deleted ? 'disabled' : ''}>
+                            ${order.deleted ? 'Deleting...' : 'Delete'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update sync queue UI
+        async function updateSyncQueueUI() {
+            const tx = db.transaction(['syncQueue'], 'readonly');
+            const store = tx.objectStore('syncQueue');
+            
+            const items = await new Promise((resolve) => {
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result);
+            });
+            
+            const container = document.getElementById('syncQueueContainer');
+            const queueList = document.getElementById('syncQueueList');
+            
+            if (items.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            queueList.innerHTML = items.map(item => `
+                <div style="padding: 5px; background: white; margin: 5px 0; border-radius: 3px;">
+                    <strong>${item.action.toUpperCase()}</strong>: ${item.clientId} 
+                    [${item.status}] - Attempts: ${item.attempts}
+                </div>
+            `).join('');
+        }
+
+        // Clear all data
+        async function clearAllData() {
+            if (!confirm('Are you sure you want to clear all orders and sync queue?')) {
+                return;
+            }
+            
+            const tx = db.transaction(['orders', 'syncQueue'], 'readwrite');
+            await Promise.all([
+                new Promise(resolve => {
+                    const request = tx.objectStore('orders').clear();
+                    request.onsuccess = () => resolve();
+                }),
+                new Promise(resolve => {
+                    const request = tx.objectStore('syncQueue').clear();
+                    request.onsuccess = () => resolve();
+                })
+            ]);
+            
+            logActivity('All data cleared', 'info');
+            await renderOrders();
+            updateSyncQueueUI();
+        }
+
+        // Handle form submission
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const orderData = {
+                customerName: document.getElementById('customerName').value,
+                product: document.getElementById('product').value,
+                amount: document.getElementById('amount').value
+            };
+            
+            await createOrder(orderData);
+            e.target.reset();
+        });
+
+        // Listen for actual network changes
+        window.addEventListener('online', () => {
+            isOnline = true;
+            updateNetworkStatus();
+        });
+
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            updateNetworkStatus();
+        });
+
+        // Initialize app
+        (async () => {
+            try {
+                await initDB();
+                logActivity('Database initialized', 'success');
+                await renderOrders();
+                updateSyncQueueUI();
+                updateNetworkStatus();
+                
+                // Set up periodic sync check (every 5 seconds)
+                setInterval(() => {
+                    if (isOnline) {
+                        processSyncQueue();
+                    }
+                }, 5000);
+            } catch (error) {
+                logActivity(`Initialization error: ${error.message}`, 'error');
+            }
+        })();
+    </script>
+</body>
+</html>
