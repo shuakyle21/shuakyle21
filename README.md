@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hi, I'm Joshua Klyne Pudadera
+# Hi 👋 , I'm Joshua Klyne Pudadera
 ### Junior Full-Stack Developer · Backend & AI-Leaning · Computer Science
 
 Building full-stack apps and AI-assisted workflows — from restaurant POS systems to a published dengue-outbreak prediction model.
@@ -14,7 +14,7 @@ Building full-stack apps and AI-assisted workflows — from restaurant POS syste
 
 ---
 
-### 👋 About
+### About
 
 - 🎓 BS Computer Science, Notre Dame of Marbel University (2021–2025)
 - 🧪 Published first-author research: *Improving Prediction of Dengue Outbreaks Using Attention-based LSTM with Honey Badger Optimization* — IJLTEMAS Vol. 15 No. 6 (2026) [![DOI](https://img.shields.io/badge/DOI-10.51583%2FIJLTEMAS.2026.150600192-blue)](https://dx.doi.org/10.51583/IJLTEMAS.2026.150600192)
