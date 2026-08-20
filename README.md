@@ -84,9 +84,7 @@ Backend project from the FlyRank AI internship — a task management REST API.
 
 <div align="center">
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=shuakyle21&theme=tokyonight&hide_border=true&include_all_commits=true&count_private=true)
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=shuakyle21&theme=tokyonight&hide_border=true&include_all_commits=true&count_private=true&layout=compact)
-
+![Github Activity](./profile-3d-contrib/profile-green-animate.svg)
 ![GitHub Streak](https://streak-stats.demolab.com/?user=shuakyle21&theme=tokyonight&hide_border=true)
 
 </div>
