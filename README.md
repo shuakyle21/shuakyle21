@@ -86,6 +86,6 @@ Backend project from the FlyRank AI internship — a task management REST API.
 
 <div align="center">
 
-![Github Activity](./profile-3d-contrib/profile-green-animate.svg)
+![Github Activity](./profile-3d-contrib/profile-south-season-animate.svg)
 
 </div>
