@@ -72,7 +72,9 @@ Cloud-based restaurant management system owned end-to-end: order taking, staff r
 **Dengue Outbreak Prediction — Published Research** *(Python · LSTM · Hyperparameter Optimization)*
 [![DOI](https://img.shields.io/badge/DOI-10.51583%2FIJLTEMAS.2026.150600192-blue)](https://dx.doi.org/10.51583/IJLTEMAS.2026.150600192)
 First-author paper on an attention-based LSTM model for dengue forecasting, published in IJLTEMAS Vol. 15 No. 6 (2026).
-- Cut prediction error (MSE) by **43.7%** vs. a standard LSTM using 10 years of climate and geographic data
+- Designed an **attention-based LSTM** model and used **Honey Badger Optimization** (a metaheuristic search algorithm) to automatically tune its hyperparameters instead of tuning by hand
+- Combined 10 years (2015–2024) of epidemiological, climate, and geographic data from the DOH Center for Health Development SOCCSKSARGEN, Google Earth Engine, and NAMRIA barangay shapefiles for Koronadal City, South Cotabato
+- Result: cut prediction error (MSE) by **43.7%** vs. a standard LSTM, and **22.2%** vs. an attention-only LSTM without the optimization step
 
 **[FastAPI Task CRUD API](https://github.com/shuakyle21/Week3_Assignment_TasksDB)** *(Python · FastAPI · PostgreSQL · Docker)*
 Backend project from the FlyRank AI internship — a task management REST API.
