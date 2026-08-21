@@ -1,7 +1,7 @@
 <div align="center">
 
 # Hi 👋 , I'm Joshua Klyne Pudadera
-### Junior Full-Stack Developer · Backend & AI-Leaning · Computer Science
+### Junior Full-Stack Developer · Backend & AI-Leaning · Data Entry and Research Specialist · Computer Science
 
 Building full-stack apps and AI-assisted workflows — from restaurant POS systems to a published dengue-outbreak prediction model.
 
