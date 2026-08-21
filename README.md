@@ -17,7 +17,7 @@
 ### About
 
 - 🎓 BS Computer Science, Notre Dame of Marbel University (2021–2025)
-- 🧪 Published first-author research: *Improving Prediction of Dengue Outbreaks Using Attention-based LSTM with Honey Badger Optimization* — IJLTEMAS Vol. 15 No. 6 (2026) [![DOI](https://img.shields.io/badge/DOI-10.51583%2FIJLTEMAS.2026.150600192-blue)](https://dx.doi.org/10.51583/IJLTEMAS.2026.150600192)
+- 🧪 Published research: *Improving Prediction of Dengue Outbreaks Using Attention-based LSTM with Honey Badger Optimization* — IJLTEMAS Vol. 15 No. 6 (2026) [![DOI](https://img.shields.io/badge/DOI-10.51583%2FIJLTEMAS.2026.150600192-blue)](https://dx.doi.org/10.51583/IJLTEMAS.2026.150600192)
 - 🔭 Currently: Backend AI Intern @ FlyRank AI (Backend AI Engineering track)
 - 🌱 Learning: agentic AI workflows and system design at scale
 - 📫 Open to: Junior/Fresh-grad Full-Stack, Backend, Data Entry/Analysis or AI Engineering roles (remote)
