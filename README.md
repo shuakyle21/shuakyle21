@@ -1,9 +1,9 @@
 <div align="center">
 
 # Hi 👋 , I'm Joshua Klyne Pudadera
-### Junior Full-Stack Developer · Backend & AI-Leaning · Data Entry and Research Specialist · Computer Science
+### Junior Full-Stack Developer · Backend & AI-Leaning · Data Entry and Research Specialist · Computer Science Graduate (2025)
 
-Building full-stack apps and AI-assisted workflows — from restaurant POS systems to a published dengue-outbreak prediction model.
+*˖.𖥔 ݁ ˖ ⊹ ࣪ ˖ ad astra per aspera ˖.𖥔 ݁ ˖ ⊹ ࣪ ˖*
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-shua--dev.vercel.app-1e2327?style=for-the-badge&logo=vercel&logoColor=white)](https://shua-dev.vercel.app)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/joshua-klyne-pudadera-b76b73368)
