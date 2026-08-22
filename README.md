@@ -7,8 +7,9 @@
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-shua--dev.vercel.app-1e2327?style=for-the-badge&logo=vercel&logoColor=white)](https://shua-dev.vercel.app)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/joshua-klyne-pudadera-b76b73368)
-[![Email](https://img.shields.io/badge/klynejoshua13%40@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your.email@example.com)
+[![Email](https://img.shields.io/badge/klynejoshua13%40@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:klynejoshua13@gmail.com)
 [![Location](https://img.shields.io/badge/Location-Banga,%20South%20Cotabato%2C%20PH-2e2e2e?style=for-the-badge&logo=googlemaps&logoColor=white)](#)
+![Profile Views](https://komarev.com/ghpvc/?username=shuakyle21&style=flat-square&color=blue)
 
 </div>
 
