@@ -11,6 +11,7 @@
 [![Location](https://img.shields.io/badge/Location-Banga,%20South%20Cotabato%2C%20PH-2e2e2e?style=for-the-badge&logo=googlemaps&logoColor=white)](#)
 ![Profile Views](https://komarev.com/ghpvc/?username=shuakyle21&style=for-the-badge&color=blue)
 
+[![GitHub Stats](https://github-stats-extended.vercel.app/api/pin?username=shuakyle21&repo=shuakyle21%2Ftesda-compliance-manager&show_owner=true&description_lines_count=2&theme=darcula)](https://github.com/shuakyle21/tesda-compliance-manager) [![GitHub Stats](https://github-stats-extended.vercel.app/api/pin?username=shuakyle21&repo=shuakyle21%2Flinear-git-skills&show_owner=true&description_lines_count=2&theme=darcula)](https://github.com/shuakyle21/linear-git-skills)
 </div>
 
 ---
