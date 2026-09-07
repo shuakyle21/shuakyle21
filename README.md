@@ -1,7 +1,7 @@
 <div align="center">
 
 # Hi 👋 , I'm Joshua Klyne Pudadera
-### Junior Full-Stack Developer · Backend & AI-Leaning · Data Entry and Research Specialist · Computer Science Graduate (2025)
+### Junior Full-Stack Developer · Backend & AI Automation · Data Entry and Research Specialist · Computer Science Graduate (2025)
 
 *˖.𖥔 ݁ ˖ ⊹ ࣪ ˖ ad astra per aspera ˖.𖥔 ݁ ˖ ⊹ ࣪ ˖*
 
