@@ -79,11 +79,10 @@ More on the [portfolio](https://shua-kyle.me).
 
 ---
 
-### GitHub Activity
+### 📊 GitHub & Activity Insights
 
 <div align="center">
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=shuakyle21&show_icons=true&theme=default)
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=shuakyle21&layout=compact)
+![Github Activity](./profile-3d-contrib/profile-south-season-animate.svg)
 
 </div>
