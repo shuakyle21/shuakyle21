@@ -1,9 +1,9 @@
 <div align="center">
 
 # Joshua Klyne Pudadera
-### Full-Stack Developer · AI Automation Specialist
+### Full-Stack Developer · Backend and AI Automation Specialist
 
-Computer Science Graduate (2025) · Backend AI Intern @ FlyRank AI · Published ML Researcher
+Computer Science Graduate (2025) · Backend AI Intern @ FlyRank AI · Data Entry / Processing Officer @ NENITA FARM RICE-BASED FARM
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-shua--kyle.me-1e2327?style=for-the-badge&logo=vercel&logoColor=white)](https://shua-kyle.me)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/joshua-klyne-pudadera-b76b73368)
