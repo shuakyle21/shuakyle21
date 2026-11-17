@@ -19,8 +19,7 @@ Banga, South Cotabato, PH · Open to remote work
 
 - 🎓 BS Computer Science, Notre Dame of Marbel University (2021–2025)
 - 🔭 Currently: Backend AI Intern @ FlyRank AI (Backend AI Engineering track) — FastAPI, Postgres, Docker, Supabase Auth
-- 🧪 First-author published research on dengue forecasting with attention-based LSTM (IJLTEMAS, 2026 — see Featured Work)
-- 📫 Open to: Junior Full-Stack, Backend, and AI Automation roles (remote)
+- 📫 Open to: Data, AI, and Automation roles, plus Backend and Full-Stack (remote)
 
 ---
 
@@ -51,20 +50,16 @@ Banga, South Cotabato, PH · Open to remote work
 
 ### Featured Work
 
-**[TVI-CAMS — Compliance & Batch Management System](https://github.com/shuakyle21/tesda-compliance-manager)** *(TypeScript · Next.js · Supabase · PostgreSQL)*
-Internal system for tracking TESDA scholarship program batches (TWSP/CFSP) from onboarding through billing.
-- Dependency-free TypeScript billing engine encoding government financial rules — cost tranching, subsidy calculations, audit-traceable outputs
-- Batch lifecycle tracking with document compliance checks and role-based access
+**TVI-CAMS — Compliance & Records Management for TESDA TVIs** *(TypeScript · Next.js · Supabase · PostgreSQL · Clerk)*
+Multi-school operations platform that tracks TESDA scholarship batches (TWSP/CFSP) from authorization to billing. Private, proprietary repository, so it is described here rather than linked.
+- Batch lifecycle tracking (AOU → NTP → TIP → Training → Assessment → Billing), with progress computed from sessions held and live deadline and urgency alerts
+- Billing engine that populates a school's own `.docx` templates (TSF/Allowance, Training Cost, Entrepreneurship), gated on training progress and verified documents
+- Multi-school isolation and role-based access (Admin, Coordinator, Trainer, Viewer) enforced in Postgres row-level security, with trainer views stripped of financial data server-side
 
 **[Nenita Farm Lechon Haus — Restaurant POS](https://github.com/shuakyle21/nenitafarm-lechonhaus)** *(React 19 · Supabase · TypeScript · Tailwind)*
 Cloud-based restaurant management system owned end-to-end: order taking, staff rostering, catering bookings, financial reporting.
 - Role-based access via Supabase RLS, real-time sales dashboard, automated PDF reporting
 - Offline-first order sync for uninterrupted front-of-house operation
-
-**[Improving Prediction of Dengue Outbreaks Using Attention-based LSTM Model with Honey Badger Optimization for Hyperparameter Tuning](https://dx.doi.org/10.51583/IJLTEMAS.2026.150600192)** *(Python · LSTM · Hyperparameter Optimization)*
-Pudadera, Sombero, Dollaga, & Sueno (2026). *International Journal of Latest Technology in Engineering Management & Applied Science*, 15(6), 2621–2632. [![DOI](https://img.shields.io/badge/DOI-10.51583%2FIJLTEMAS.2026.150600192-blue)](https://dx.doi.org/10.51583/IJLTEMAS.2026.150600192)
-- Attention-based LSTM with Honey Badger Optimization for automated hyperparameter tuning, trained on 10 years (2015–2024) of epidemiological, climate, and geographic data for Koronadal City, South Cotabato
-- Cut prediction error (MSE) by **43.7%** vs. a standard LSTM and **22.2%** vs. an attention-only LSTM
 
 **[flyrank-backend-ai — Backend Internship Monorepo](https://github.com/shuakyle21/flyrank-backend-ai)** *(Python · FastAPI · PostgreSQL · Docker)*
 Consolidated FlyRank AI Backend Engineering track: five self-contained projects, one per folder (BE-01 → BE-05).
